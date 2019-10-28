@@ -154,7 +154,7 @@ def colorclust_draw(df, method, metric, color_threshold, ts_space=1):
     
     Output
     ------
-    Plot dendrogram with timeseries graphs on the side
+    Plot dendrogram with timeseries graphs classified by color on the side
     '''
 
     # agglomerative clustering
