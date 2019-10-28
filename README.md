@@ -1,8 +1,9 @@
 # dendrogram-timeseries
-Scipy's dendrogram for agglomerative clustering is good, but requires extensive customizations
+Scipy's dendrogram for agglomerative clustering requires extensive customizations
 to make it more informative. This package wraps scipy's dendrogram with two customizations:
- * Distance labels and cluster split points
  * Timeseries graph at the side
+ * Distance labels and cluster split points
+ 
 
 ## Installation
 Download ``dendrogram_ts.py`` and put in your python site-package or project folder.
