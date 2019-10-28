@@ -33,7 +33,7 @@ def maxclust_draw(df, method, metric, max_cluster, ts_space=1):
     '''
     Description
     ------------
-    Draw agglomerative clustering dendrogram based on maximum cluster criteron
+    Draw agglomerative clustering dendrogram with timeseries graphs based on maximum cluster criteron
     
     Arguments
     ---------
@@ -45,7 +45,7 @@ def maxclust_draw(df, method, metric, max_cluster, ts_space=1):
     
     Output
     ------
-    Plot dendrogram with timeseries graphs on the side
+    Plot dendrogram with aggregrated timeseries graphs on the side based on maximum cluster
     '''
     
     # define gridspec space
@@ -84,3 +84,55 @@ def maxclust_draw(df, method, metric, max_cluster, ts_space=1):
 
     plt.tight_layout()
 
+def allclust_draw(df, method, metric, ts_space):
+    '''
+    Description
+    ------------
+    Draw agglomerative clustering dendrogram with timeseries graphs for all clusters
+    
+    Arguments
+    ---------
+    df: dataframe or arrays of timeseries
+    method: agglomerative clustering linkage method, e.g., 'ward'
+    metric: distance metrics, e.g., 'euclidean'
+    ts_space: horizontal space for timeseries graph to be plotted
+    
+    Output
+    ------
+    Plot dendrogram with all timeseries graphs on the side when distance=0
+    '''
+
+    # agglomerative clustering
+    Z = linkage(df, method=method, metric=metric)
+    max_cluster = len(Z)+1
+    
+    # define gridspec space
+    gs = gridspec.GridSpec(max_cluster,max_cluster)
+
+    # add dendrogram to gridspec
+    plt.subplot(gs[:, 0:max_cluster-ts_space-1]) # add -1 to give timeseries graphs more space
+    plt.xlabel('Distance')
+    plt.ylabel('Cluster')
+    
+    ddata = dendrogram(Z, orientation='left',
+                       show_leaf_counts=True)
+    
+    # add distance labels in dendrogram
+    add_distance(ddata)            
+
+    # get all cluster labels by inputting distance 0 threshold
+    y = fcluster(Z, 0, criterion='distance')
+    y = pd.DataFrame(y,columns=['y'])
+    
+    # merge with original dataset
+    dx=pd.concat([df.reset_index(drop=True), y],axis=1)
+
+    # add timeseries graphs to gridspec
+    for cluster in range(1,max_cluster+1):
+        reverse_plot = max_cluster+1-cluster
+        plt.subplot(gs[reverse_plot-1:reverse_plot,max_cluster-ts_space:max_cluster])
+        plt.axis('off')
+        for i in range(len(dx[dx['y']==cluster])):
+            plt.plot(dx[dx['y']==cluster].T[:-1].iloc[:,i]);
+
+    # plt.tight_layout() # removed as kept having error when there are many clusters
