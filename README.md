@@ -23,7 +23,7 @@ maxclust_draw(df.T, 'ward', 'euclidean', max_cluster=10, ts_space=2)
 ## Plot All Clusters
 
 ```python
-from dendrogram_ts import maxclust_draw
+from dendrogram_ts import allclust_draw
 
 plt.style.use('seaborn-whitegrid')
 plt.figure(figsize=(12,10))
