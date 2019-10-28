@@ -11,9 +11,9 @@ def add_distance(ddata, dist_threshold=None, fontsize=8):
 
     Arguments
     ---------
-    ddata: scipy dendrogram output
+    ddata:          scipy dendrogram output
     dist_threshold: distance threshold where label will be drawn, if None, 1/10 from base leafs will not be labelled to prevent clustter
-    fontsize: size of distance labels
+    fontsize:       size of distance labels
     '''
     if dist_threshold==None:
         # add labels except for 1/10 from base leaf nodes
@@ -37,11 +37,11 @@ def maxclust_draw(df, method, metric, max_cluster, ts_space=1):
     
     Arguments
     ---------
-    df: dataframe or arrays of timeseries
-    method: agglomerative clustering linkage method, e.g., 'ward'
-    metric: distance metrics, e.g., 'euclidean'
+    df:          dataframe or arrays of timeseries
+    method:      agglomerative clustering linkage method, e.g., 'ward'
+    metric:      distance metrics, e.g., 'euclidean'
     max_cluster: maximum cluster size to flatten cluster
-    ts_space: horizontal space for timeseries graph to be plotted
+    ts_space:    horizontal space for timeseries graph to be plotted
     
     Output
     ------
@@ -92,10 +92,10 @@ def allclust_draw(df, method, metric, ts_space):
     
     Arguments
     ---------
-    df: dataframe or arrays of timeseries
-    method: agglomerative clustering linkage method, e.g., 'ward'
-    metric: distance metrics, e.g., 'euclidean'
-    ts_space: horizontal space for timeseries graph to be plotted
+    df:         dataframe or arrays of timeseries
+    method:     agglomerative clustering linkage method, e.g., 'ward'
+    metric:     distance metrics, e.g., 'euclidean'
+    ts_space:   horizontal space for timeseries graph to be plotted
     
     Output
     ------
