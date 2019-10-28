@@ -40,7 +40,7 @@ plt.style.use('seaborn-white')
 
 plt.style.use('seaborn-whitegrid')
 plt.figure(figsize=(12,10))
-colorclust_draw(df.T, 'ward', 'euclidean', ts_space=5)
+colorclust_draw(df.T, method='ward', metric='euclidean', color_threshold=5200, ts_space=1)
 ```
 
 <img src="https://github.com/mapattacker/dendrogram-timeseries/blob/master/images/dendrogram3.png" width="650">
