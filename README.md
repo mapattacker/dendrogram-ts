@@ -13,6 +13,7 @@ from dendrogram_ts import maxclust_draw
 
 plt.style.use('seaborn-whitegrid')
 plt.figure(figsize=(8,5));
+
 maxclust_draw(df.T, 'ward', 'euclidean', max_cluster=10, ts_space=2)
 ```
 
@@ -25,6 +26,7 @@ from dendrogram_ts import allclust_draw
 
 plt.style.use('seaborn-whitegrid')
 plt.figure(figsize=(12,10))
+
 allclust_draw(df.T, 'ward', 'euclidean', ts_space=5)
 ```
 
@@ -35,11 +37,11 @@ allclust_draw(df.T, 'ward', 'euclidean', ts_space=5)
 ```python
 from dendrogram_ts import colorclust_draw
 import matplotlib as mpl
+
 mpl.rcParams['lines.linewidth'] = 1
 plt.style.use('seaborn-white')
-
-plt.style.use('seaborn-whitegrid')
 plt.figure(figsize=(12,10))
+
 colorclust_draw(df.T, method='ward', metric='euclidean', color_threshold=5200, ts_space=1)
 ```
 
