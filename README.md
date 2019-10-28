@@ -50,5 +50,4 @@ colorclust_draw(df.T, method='ward', metric='euclidean', color_threshold=5200, t
 
 
 ## Pipeline
-1. Timeseries graph by color threshold
-2. Compile package to pip 
+1. Compile package to pip 
