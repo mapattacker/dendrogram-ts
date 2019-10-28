@@ -1,8 +1,6 @@
 # dendrogram-timeseries
-Scipy dendrogram for agglomerative clustering is good, but requires extensive customizations
-to make it more informative.
-
-This package wraps scipy's dendrogram with two customizations:
+Scipy's dendrogram for agglomerative clustering is good, but requires extensive customizations
+to make it more informative. This package wraps scipy's dendrogram with two customizations:
  * Distance labels and cluster split points
  * Timeseries graph at the side
 
@@ -31,6 +29,25 @@ allclust_draw(df.T, 'ward', 'euclidean', ts_space=5)
 ```
 
 <img src="https://github.com/mapattacker/dendrogram-timeseries/blob/master/images/dendrogram2.png" width="600">
+
+## Plot by Color Threshold
+
+```python
+from dendrogram_ts import colorclust_draw
+import matplotlib as mpl
+mpl.rcParams['lines.linewidth'] = 1
+plt.style.use('seaborn-white')
+
+plt.style.use('seaborn-whitegrid')
+plt.figure(figsize=(12,10))
+colorclust_draw(df.T, 'ward', 'euclidean', ts_space=5)
+```
+
+<img src="https://github.com/mapattacker/dendrogram-timeseries/blob/master/images/dendrogram3.png" width="600">
+
+## Dependencies
+`matplotlib`, `scipy`
+
 
 ## Pipeline
 1. Timeseries graph by color threshold
