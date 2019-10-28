@@ -40,7 +40,7 @@ def maxclust_draw(df, method, metric, max_cluster, ts_space=1):
     df:          dataframe or arrays of timeseries
     method:      agglomerative clustering linkage method, e.g., 'ward'
     metric:      distance metrics, e.g., 'euclidean'
-    max_cluster: maximum cluster size to flatten cluster
+    max_cluster: maximum cluster size to trim dendrogram, and extract cluster labels
     ts_space:    horizontal space for timeseries graph to be plotted
     
     Output
@@ -152,7 +152,7 @@ def colorclust_draw(df, method, metric, color_threshold, ts_space=1):
     color_threshold: plot dendrogram cluster colors using a distance threshold
     ts_space: horizontal space for timeseries graph to be plotted
     
-    Output
+    Return
     ------
     Plot dendrogram with timeseries graphs classified by color on the side
     '''
