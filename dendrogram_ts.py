@@ -136,3 +136,73 @@ def allclust_draw(df, method, metric, ts_space):
             plt.plot(dx[dx['y']==cluster].T[:-1].iloc[:,i]);
 
     # plt.tight_layout() # removed as kept having error when there are many clusters
+
+
+def colorclust_draw(df, method, metric, color_threshold, ts_space=1):
+    '''
+    Description
+    ------------
+    Draw agglomerative clustering dendrogram with timeseries graphs for cluster threshold by color
+    
+    Arguments
+    ---------
+    df: dataframe or arrays of timeseries
+    method: agglomerative clustering linkage method, e.g., 'ward'
+    metric: distance metrics, e.g., 'euclidean'
+    color_threshold: plot dendrogram cluster colors using a distance threshold
+    ts_space: horizontal space for timeseries graph to be plotted
+    
+    Output
+    ------
+    Plot dendrogram with timeseries graphs on the side
+    '''
+
+    # agglomerative clustering
+    Z = linkage(df, method=method, metric=metric)
+    
+    # get cluster size via no. unique colors from color threshold
+    clustcolor = dendrogram(Z, color_threshold=color_threshold, no_plot=True)['color_list']
+    clustcolor = np.array(clustcolor)
+    _, idx = np.unique(clustcolor, return_index=True) # arrange colors to order after np.unique
+    clustcolor = clustcolor[np.sort(idx)]
+    clustcolor = [i for i in clustcolor if i!='b'] # remove additional blue base linkage color
+
+    max_cluster = len(clustcolor) 
+    
+    # define gridspec space
+    gs = gridspec.GridSpec(max_cluster,max_cluster)
+
+    # add dendrogram to gridspec
+    plt.subplot(gs[:, 0:max_cluster-ts_space])
+    plt.xlabel('Distance')
+    plt.ylabel('Cluster')
+    plt.axis('off')
+    
+    ddata = dendrogram(Z, orientation='left',
+                       color_threshold=color_threshold,
+                       show_leaf_counts=True)
+    
+    # add distance labels in dendrogram
+    add_distance(ddata)            
+
+    # add distance cutoff line
+    line = color_threshold
+    plt.axvline(x=line, c='black', lw=0.5, linestyle='--');
+
+    # get all cluster labels by inputting distance using color_threshold
+    y = fcluster(Z, color_threshold, criterion='distance')
+    y = pd.DataFrame(y,columns=['y'])
+    
+    # merge with original dataset
+    dx=pd.concat([df.reset_index(drop=True), y],axis=1)
+    
+    # add timeseries graphs to gridspec
+    for cluster in range(1,max_cluster+1):
+        color = clustcolor[cluster-1]
+        reverse_plot = max_cluster+1-cluster
+        plt.subplot(gs[reverse_plot-1:reverse_plot,max_cluster-ts_space:max_cluster])
+        plt.axis('off')
+        for i in range(len(dx[dx['y']==cluster])):
+            plt.plot(dx[dx['y']==cluster].T[:-1].iloc[:,i], color=color);
+
+    plt.tight_layout()
