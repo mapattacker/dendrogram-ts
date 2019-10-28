@@ -43,7 +43,7 @@ plt.figure(figsize=(12,10))
 colorclust_draw(df.T, 'ward', 'euclidean', ts_space=5)
 ```
 
-<img src="https://github.com/mapattacker/dendrogram-timeseries/blob/master/images/dendrogram3.png" width="600">
+<img src="https://github.com/mapattacker/dendrogram-timeseries/blob/master/images/dendrogram3.png" width="650">
 
 ## Dependencies
 `matplotlib`, `scipy`
