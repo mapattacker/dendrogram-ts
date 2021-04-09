@@ -48,8 +48,6 @@ colorclust_draw(df.T, method='ward', metric='euclidean', color_threshold=5200, t
 
 <img src="https://github.com/mapattacker/dendrogram-timeseries/blob/master/images/dendrogram3.png" width="650">
 
-## Dependencies
-`matplotlib`, `scipy`
 
 
 ## Pipeline
