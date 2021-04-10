@@ -14,6 +14,7 @@ def add_distance(ddata, dist_threshold=None, fontsize=8):
                         if None, 1/10 from base leafs will not be labelled to prevent clutter
         fontsize (int): size of distance labels
     """
+
     if dist_threshold is None:
         # add labels except for 1/10 from base leaf nodes
         dist_threshold = max([a for i in ddata["dcoord"] for a in i]) / 10
@@ -44,6 +45,7 @@ def add_distance(ddata, dist_threshold=None, fontsize=8):
 
 def draw_timeseries(dx, max_cluster, gs, ts_hspace, clustcolor=None):
     """plot timeseries graphs beside dendrogram"""
+
     for cluster in range(1, max_cluster + 1):
         reverse_plot = max_cluster + 1 - cluster
         plt.subplot(
@@ -62,7 +64,7 @@ def maxclust_draw(df, method, metric, max_cluster, ts_hspace=1, dist_label=False
     """Draw agglomerative clustering dendrogram with timeseries graphs based on maximum cluster criteron
 
     Args
-        df (pd dataframe): df with each column being the time window of readings
+        df (pd dataframe): df with each row being the time window of readings
         method: agglomerative clustering linkage method, e.g., 'ward'
         metric: distance metrics, e.g., 'euclidean'
         max_cluster: maximum cluster size to trim dendrogram, and extract cluster labels
@@ -116,7 +118,7 @@ def allclust_draw(df, method, metric, ts_hspace=2, dist_label=False):
     Draw agglomerative clustering dendrogram with timeseries graphs for all clusters
 
     Args
-        df (pd dataframe): df with each column being the time window of readings
+        df (pd dataframe): df with each row being the time window of readings
         method (str): agglomerative clustering linkage method, e.g., 'ward'
         metric (str): distance metrics, e.g., 'euclidean'
         ts_hspace (int): horizontal space for timeseries graph to be plotted
@@ -163,7 +165,7 @@ def colorclust_draw(df, method, metric, color_threshold, ts_hspace=1, dist_label
     Draw agglomerative clustering dendrogram with timeseries graphs for cluster threshold by color
 
     Args
-        df (pd dataframe): df with each column being the time window of readings
+        df (pd dataframe): df with each row being the time window of readings
         method: agglomerative clustering linkage method, e.g., 'ward'
         metric: distance metrics, e.g., 'euclidean'
         color_threshold: plot dendrogram cluster colors using a distance threshold
