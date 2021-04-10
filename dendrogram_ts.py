@@ -5,27 +5,25 @@ import pandas as pd
 from scipy.cluster.hierarchy import dendrogram, fcluster, linkage
 
 
-# if str(label)  5 
-
 def add_distance(ddata, dist_threshold=None, fontsize=8):
     """Plot cluster points & distance labels in dendrogram
 
     Args
         ddata (np array): scipy dendrogram output
         dist_threshold: distance threshold where label will be drawn,
-                        if None, 1/10 from base leafs will not be labelled to prevent clustter
+                        if None, 1/10 from base leafs will not be labelled to prevent clutter
         fontsize (int): size of distance labels
     """
-    if dist_threshold == None:
+    if dist_threshold is None:
         # add labels except for 1/10 from base leaf nodes
         dist_threshold = max([a for i in ddata["dcoord"] for a in i]) / 10
     for i, d, c in zip(ddata["icoord"], ddata["dcoord"], ddata["color_list"]):
         y = sum(i[1:3]) / 2
         x = d[1]
-        
+
         # space labels to right so does not touch the nodes
         label_len = len(str(int(x)))
-        if label_len > 5: 
+        if label_len > 5:
             rspace = label_len - 1
         else: 
             rspace = 0
@@ -42,6 +40,7 @@ def add_distance(ddata, dist_threshold=None, fontsize=8):
                 ha="center",
                 fontsize=fontsize,
             )
+
 
 def draw_timeseries(dx, max_cluster, gs, ts_hspace, clustcolor=None):
     """plot timeseries graphs beside dendrogram"""
@@ -63,7 +62,7 @@ def maxclust_draw(df, method, metric, max_cluster, ts_hspace=1, dist_label=False
     """Draw agglomerative clustering dendrogram with timeseries graphs based on maximum cluster criteron
 
     Args
-        df (pd dataframe): dataframe or arrays of timeseries
+        df (pd dataframe): df with each column being the time window of readings
         method: agglomerative clustering linkage method, e.g., 'ward'
         metric: distance metrics, e.g., 'euclidean'
         max_cluster: maximum cluster size to trim dendrogram, and extract cluster labels
@@ -112,12 +111,12 @@ def maxclust_draw(df, method, metric, max_cluster, ts_hspace=1, dist_label=False
     return dx
 
 
-def allclust_draw(df, method, metric, ts_hspace, dist_label=False):
+def allclust_draw(df, method, metric, ts_hspace=2, dist_label=False):
     """
     Draw agglomerative clustering dendrogram with timeseries graphs for all clusters
 
     Args
-        df: dataframe or arrays of timeseries
+        df (pd dataframe): df with each column being the time window of readings
         method (str): agglomerative clustering linkage method, e.g., 'ward'
         metric (str): distance metrics, e.g., 'euclidean'
         ts_hspace (int): horizontal space for timeseries graph to be plotted
@@ -134,9 +133,8 @@ def allclust_draw(df, method, metric, ts_hspace, dist_label=False):
     gs = gridspec.GridSpec(max_cluster, max_cluster)
 
     # add dendrogram to gridspec
-    plt.subplot(
-        gs[:, 0 : max_cluster - ts_hspace - 1]
-    )  # add -1 to give timeseries graphs more space
+    # add -1 to give timeseries graphs more space
+    plt.subplot(gs[:, 0 : max_cluster - ts_hspace - 1])
     plt.xlabel("Distance")
     plt.ylabel("Cluster")
 
@@ -165,7 +163,7 @@ def colorclust_draw(df, method, metric, color_threshold, ts_hspace=1, dist_label
     Draw agglomerative clustering dendrogram with timeseries graphs for cluster threshold by color
 
     Args
-        df: dataframe or arrays of timeseries
+        df (pd dataframe): df with each column being the time window of readings
         method: agglomerative clustering linkage method, e.g., 'ward'
         metric: distance metrics, e.g., 'euclidean'
         color_threshold: plot dendrogram cluster colors using a distance threshold
@@ -189,7 +187,6 @@ def colorclust_draw(df, method, metric, color_threshold, ts_hspace=1, dist_label
     # remove additional blue base linkage color
     clustcolor = [i for i in clustcolor if i != "b"]
 
-
     # get all cluster labels by inputting distance using color_threshold
     y = fcluster(Z, color_threshold, criterion="distance")
     max_cluster = max(y)
@@ -205,9 +202,9 @@ def colorclust_draw(df, method, metric, color_threshold, ts_hspace=1, dist_label
     plt.axis("off")
 
     ddata = dendrogram(
-        Z, 
-        orientation="left", 
-        color_threshold=color_threshold, 
+        Z,
+        orientation="left",
+        color_threshold=color_threshold,
         show_leaf_counts=True
     )
 
@@ -218,7 +215,6 @@ def colorclust_draw(df, method, metric, color_threshold, ts_hspace=1, dist_label
     # add distance cutoff line
     line = color_threshold
     plt.axvline(x=line, c="black", lw=0.5, linestyle="--")
-
 
     # merge with original dataset
     dx = pd.concat([df.reset_index(drop=True), y], axis=1)
