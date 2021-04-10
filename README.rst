@@ -15,8 +15,8 @@ Installation
     
     pip install dendrogram-ts
 
-Example
--------
+Examples
+--------
 
 Plot by Maximum Clusters
 ************************
