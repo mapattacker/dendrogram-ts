@@ -13,7 +13,7 @@ Installation
 
 .. code:: bash
     
-    pip install dendrogram_ts
+    pip install dendrogram-ts
 
 Example
 -------
