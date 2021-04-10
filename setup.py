@@ -1,11 +1,15 @@
 from distutils.core import setup
 
+with open('README.md') as readme_file:
+    readme = readme_file.read()
+
 setup(
   name = 'dendrogram_ts',
   packages = ['dendrogram_ts'],
   version = '0.1.0-beta.2',    
   license='MIT',
   description = "Plotting time-series graphs in scipy's dendrogram",
+  long_description = readme,
   author = 'Jake Teo',
   author_email = 'mapattacker@gmail.com',
   url = 'https://github.com/mapattacker/dendrogram-ts',
