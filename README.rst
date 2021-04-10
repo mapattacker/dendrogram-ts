@@ -3,8 +3,9 @@ Dendrogram Timeseries
 
 Scipy's dendrogram for agglomerative clustering requires extensive customizations
 to make it more informative. This package wraps scipy's dendrogram with two customizations:
- * Timeseries graph at the side
- * Distance labels and cluster split points
+
+    * Timeseries graph at the side
+    * Distance labels and cluster split points
  
 
 Installation
