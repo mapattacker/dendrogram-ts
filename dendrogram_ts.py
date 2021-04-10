@@ -22,12 +22,14 @@ def add_distance(ddata, dist_threshold=None, fontsize=8):
     for i, d, c in zip(ddata["icoord"], ddata["dcoord"], ddata["color_list"]):
         y = sum(i[1:3]) / 2
         x = d[1]
+        
         # space labels to right so does not touch the nodes
         label_len = len(str(int(x)))
         if label_len > 5: 
-            rspace = label_len - 2
+            rspace = label_len - 1
         else: 
             rspace = 0
+        
         # only label above distance threshold
         if x > dist_threshold:
             plt.plot(x, y, "o", c=c, markeredgewidth=0)
@@ -82,7 +84,6 @@ def maxclust_draw(df, method, metric, max_cluster, ts_hspace=1, dist_label=False
 
     # agglomerative clustering
     Z = linkage(df, method=method, metric=metric)
-    print(len(Z))
     ddata = dendrogram(
         Z,
         orientation="left",
