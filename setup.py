@@ -1,6 +1,6 @@
 from distutils.core import setup
 
-with open('README.md') as readme_file:
+with open('README.rst') as readme_file:
     readme = readme_file.read()
 
 setup(
@@ -10,7 +10,6 @@ setup(
   license='MIT',
   description = "Plotting time-series graphs in scipy's dendrogram",
   long_description = readme,
-  long_description_content_type='text/markdown',
   author = 'Jake Teo',
   author_email = 'mapattacker@gmail.com',
   url = 'https://github.com/mapattacker/dendrogram-ts',
