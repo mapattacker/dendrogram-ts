@@ -13,7 +13,7 @@ Installation
 
 .. code:: bash
     
-    pip install dendrogram-ts
+    pip install dendrogram_ts
 
 Example
 -------
@@ -31,7 +31,7 @@ Plot by Maximum Clusters
     maxclust_draw(df, 'ward', 'euclidean', max_cluster=10, ts_hspace=2)
 
 
-.. figure:: https://github.com/mapattacker/dendrogram-ts/blob/master/images/dendrogram1.png
+.. figure:: https://github.com/mapattacker/dendrogram-ts/blob/master/images/dendrogram1.png?raw=true
     :width: 650px
     :align: center
 
@@ -49,7 +49,7 @@ Plot by Color Threshold
 
     colorclust_draw(df, method='ward', metric='euclidean', color_threshold=5200, ts_hspace=1)
 
-.. figure:: https://github.com/mapattacker/dendrogram-ts/blob/master/images/dendrogram3.png
+.. figure:: https://github.com/mapattacker/dendrogram-ts/blob/master/images/dendrogram3.png?raw=true
     :width: 650px
     :align: center
 
@@ -65,6 +65,6 @@ Plot All Clusters
 
     allclust_draw(df, 'ward', 'euclidean', ts_hspace=5)
 
-.. figure:: https://github.com/mapattacker/dendrogram-ts/blob/master/images/dendrogram2.png
+.. figure:: https://github.com/mapattacker/dendrogram-ts/blob/master/images/dendrogram2.png?raw=true
     :width: 650px
     :align: center
