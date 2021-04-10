@@ -15,23 +15,10 @@ from dendrogram_ts import maxclust_draw
 plt.style.use('seaborn-whitegrid')
 plt.figure(figsize=(8,5));
 
-maxclust_draw(df.T, 'ward', 'euclidean', max_cluster=10, ts_space=2)
+maxclust_draw(df, 'ward', 'euclidean', max_cluster=10, ts_hspace=2)
 ```
 
 <img src="https://github.com/mapattacker/dendrogram-timeseries/blob/master/images/dendrogram1.png" width="600">
-
-## Plot All Clusters
-
-```python
-from dendrogram_ts import allclust_draw
-
-plt.style.use('seaborn-whitegrid')
-plt.figure(figsize=(12,10))
-
-allclust_draw(df.T, 'ward', 'euclidean', ts_space=5)
-```
-
-<img src="https://github.com/mapattacker/dendrogram-timeseries/blob/master/images/dendrogram2.png" width="600">
 
 ## Plot by Color Threshold
 
@@ -43,12 +30,20 @@ mpl.rcParams['lines.linewidth'] = 1
 plt.style.use('seaborn-white')
 plt.figure(figsize=(12,10))
 
-colorclust_draw(df.T, method='ward', metric='euclidean', color_threshold=5200, ts_space=1)
+colorclust_draw(df, method='ward', metric='euclidean', color_threshold=5200, ts_hspace=1)
 ```
 
 <img src="https://github.com/mapattacker/dendrogram-timeseries/blob/master/images/dendrogram3.png" width="650">
 
+## Plot All Clusters
 
+```python
+from dendrogram_ts import allclust_draw
 
-## Pipeline
-1. Compile package to pip 
+plt.style.use('seaborn-whitegrid')
+plt.figure(figsize=(12,10))
+
+allclust_draw(df, 'ward', 'euclidean', ts_hspace=5)
+```
+
+<img src="https://github.com/mapattacker/dendrogram-timeseries/blob/master/images/dendrogram2.png" width="600">
