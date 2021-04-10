@@ -6,7 +6,7 @@ with open('README.md') as readme_file:
 setup(
   name = 'dendrogram_ts',
   packages = ['dendrogram_ts'],
-  version = '0.1.0-beta.5',
+  version = '0.1.0-beta.6',
   license='MIT',
   description = "Plotting time-series graphs in scipy's dendrogram",
   long_description = readme,
@@ -14,7 +14,7 @@ setup(
   author = 'Jake Teo',
   author_email = 'mapattacker@gmail.com',
   url = 'https://github.com/mapattacker/dendrogram-ts',
-  download_url = 'https://github.com/mapattacker/dendrogram-ts/archive/refs/tags/v0.1.0-beta.5.tar.gz',
+  download_url = 'https://github.com/mapattacker/dendrogram-ts/archive/refs/tags/v0.1.0-beta.6.tar.gz',
   keywords = ['dendrogram', 'agglomerative clustering', 'timeseries'],
   install_requires=[
             'pandas==1.2.*',
