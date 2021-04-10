@@ -5,14 +5,16 @@ import pandas as pd
 from scipy.cluster.hierarchy import dendrogram, fcluster, linkage
 
 
+# if str(label)  5 
+
 def add_distance(ddata, dist_threshold=None, fontsize=8):
     """Plot cluster points & distance labels in dendrogram
 
     Args
-        ddata: scipy dendrogram output
+        ddata (np array): scipy dendrogram output
         dist_threshold: distance threshold where label will be drawn,
                         if None, 1/10 from base leafs will not be labelled to prevent clustter
-        fontsize: size of distance labels
+        fontsize (int): size of distance labels
     """
     if dist_threshold == None:
         # add labels except for 1/10 from base leaf nodes
@@ -20,29 +22,50 @@ def add_distance(ddata, dist_threshold=None, fontsize=8):
     for i, d, c in zip(ddata["icoord"], ddata["dcoord"], ddata["color_list"]):
         y = sum(i[1:3]) / 2
         x = d[1]
+        # space labels to right so does not touch the nodes
+        label_len = len(str(int(x)))
+        if label_len > 5: 
+            rspace = label_len - 2
+        else: 
+            rspace = 0
         # only label above distance threshold
         if x > dist_threshold:
             plt.plot(x, y, "o", c=c, markeredgewidth=0)
             plt.annotate(
                 int(x),
                 (x, y),
-                xytext=(15, 3),
+                xytext=(15+rspace, 3),
                 textcoords="offset points",
                 va="top",
                 ha="center",
                 fontsize=fontsize,
             )
 
+def draw_timeseries(dx, max_cluster, gs, ts_hspace, clustcolor=None):
+    """plot timeseries graphs beside dendrogram"""
+    for cluster in range(1, max_cluster + 1):
+        reverse_plot = max_cluster + 1 - cluster
+        plt.subplot(
+            gs[reverse_plot - 1 : reverse_plot, max_cluster - ts_hspace : max_cluster]
+        )
+        plt.axis("off")
+        for i in range(len(dx[dx["y"] == cluster])):
+            if clustcolor:
+                color = clustcolor[cluster - 1]
+                plt.plot(dx[dx["y"] == cluster].T[:-1].iloc[:, i], color=color)
+            else:
+                plt.plot(dx[dx["y"] == cluster].T[:-1].iloc[:, i])
 
-def maxclust_draw(df, method, metric, max_cluster, ts_space=1):
+
+def maxclust_draw(df, method, metric, max_cluster, ts_hspace=1, dist_label=False):
     """Draw agglomerative clustering dendrogram with timeseries graphs based on maximum cluster criteron
 
     Args
-        df: dataframe or arrays of timeseries
+        df (pd dataframe): dataframe or arrays of timeseries
         method: agglomerative clustering linkage method, e.g., 'ward'
         metric: distance metrics, e.g., 'euclidean'
         max_cluster: maximum cluster size to trim dendrogram, and extract cluster labels
-        ts_space: horizontal space for timeseries graph to be plotted
+        ts_hspace: horizontal space for timeseries graph to be plotted
 
     Out
         Plot dendrogram with aggregrated timeseries graphs on the side
@@ -53,25 +76,26 @@ def maxclust_draw(df, method, metric, max_cluster, ts_space=1):
     gs = gridspec.GridSpec(max_cluster, max_cluster)
 
     # add dendrogram to gridspec
-    plt.subplot(gs[:, 0 : max_cluster - ts_space])
+    plt.subplot(gs[:, 0 : max_cluster - ts_hspace])
     plt.xlabel("Distance")
     plt.ylabel("Cluster")
 
     # agglomerative clustering
     Z = linkage(df, method=method, metric=metric)
+    print(len(Z))
     ddata = dendrogram(
         Z,
         orientation="left",
         truncate_mode="lastp",
         p=max_cluster,
-        labels=True,
         get_leaves=True,
         show_leaf_counts=True,
         show_contracted=True,
     )
 
     # add distance labels in dendrogram
-    add_distance(ddata)
+    if dist_label:
+        add_distance(ddata)
 
     # get cluster labels
     y = fcluster(Z, max_cluster, criterion="maxclust")
@@ -81,27 +105,21 @@ def maxclust_draw(df, method, metric, max_cluster, ts_space=1):
     dx = pd.concat([df.reset_index(drop=True), y], axis=1)
 
     # add timeseries graphs to gridspec
-    for cluster in range(1, max_cluster + 1):
-        reverse_plot = max_cluster + 1 - cluster
-        plt.subplot(
-            gs[reverse_plot - 1 : reverse_plot, max_cluster - ts_space : max_cluster]
-        )
-        plt.axis("off")
-        for i in range(len(dx[dx["y"] == cluster])):
-            plt.plot(dx[dx["y"] == cluster].T[:-1].iloc[:, i])
+    draw_timeseries(dx, max_cluster, gs, ts_hspace)
 
     plt.tight_layout()
+    return dx
 
 
-def allclust_draw(df, method, metric, ts_space):
+def allclust_draw(df, method, metric, ts_hspace, dist_label=False):
     """
     Draw agglomerative clustering dendrogram with timeseries graphs for all clusters
 
     Args
         df: dataframe or arrays of timeseries
-        method: agglomerative clustering linkage method, e.g., 'ward'
-        metric: distance metrics, e.g., 'euclidean'
-        ts_space: horizontal space for timeseries graph to be plotted
+        method (str): agglomerative clustering linkage method, e.g., 'ward'
+        metric (str): distance metrics, e.g., 'euclidean'
+        ts_hspace (int): horizontal space for timeseries graph to be plotted
 
     Out
         Plot dendrogram with all timeseries graphs on the side when distance=0
@@ -116,7 +134,7 @@ def allclust_draw(df, method, metric, ts_space):
 
     # add dendrogram to gridspec
     plt.subplot(
-        gs[:, 0 : max_cluster - ts_space - 1]
+        gs[:, 0 : max_cluster - ts_hspace - 1]
     )  # add -1 to give timeseries graphs more space
     plt.xlabel("Distance")
     plt.ylabel("Cluster")
@@ -124,7 +142,8 @@ def allclust_draw(df, method, metric, ts_space):
     ddata = dendrogram(Z, orientation="left", show_leaf_counts=True)
 
     # add distance labels in dendrogram
-    add_distance(ddata)
+    if dist_label:
+        add_distance(ddata)
 
     # get all cluster labels by inputting distance 0 threshold
     y = fcluster(Z, 0, criterion="distance")
@@ -134,19 +153,13 @@ def allclust_draw(df, method, metric, ts_space):
     dx = pd.concat([df.reset_index(drop=True), y], axis=1)
 
     # add timeseries graphs to gridspec
-    for cluster in range(1, max_cluster + 1):
-        reverse_plot = max_cluster + 1 - cluster
-        plt.subplot(
-            gs[reverse_plot - 1 : reverse_plot, max_cluster - ts_space : max_cluster]
-        )
-        plt.axis("off")
-        for i in range(len(dx[dx["y"] == cluster])):
-            plt.plot(dx[dx["y"] == cluster].T[:-1].iloc[:, i])
+    draw_timeseries(dx, max_cluster, gs, ts_hspace)
 
-    # plt.tight_layout() # removed as kept having error when there are many clusters
+    # removed as kept having error when there are many clusters
+    # plt.tight_layout() 
 
 
-def colorclust_draw(df, method, metric, color_threshold, ts_space=1):
+def colorclust_draw(df, method, metric, color_threshold, ts_hspace=1, dist_label=False):
     """
     Draw agglomerative clustering dendrogram with timeseries graphs for cluster threshold by color
 
@@ -155,7 +168,7 @@ def colorclust_draw(df, method, metric, color_threshold, ts_space=1):
         method: agglomerative clustering linkage method, e.g., 'ward'
         metric: distance metrics, e.g., 'euclidean'
         color_threshold: plot dendrogram cluster colors using a distance threshold
-        ts_space: horizontal space for timeseries graph to be plotted
+        ts_hspace: horizontal space for timeseries graph to be plotted
 
     Out
         Plot dendrogram with timeseries graphs classified by color on the side
@@ -169,52 +182,47 @@ def colorclust_draw(df, method, metric, color_threshold, ts_space=1):
         "color_list"
     ]
     clustcolor = np.array(clustcolor)
-    _, idx = np.unique(
-        clustcolor, return_index=True
-    )  # arrange colors to order after np.unique
+    # arrange colors to order after np.unique
+    _, idx = np.unique(clustcolor, return_index=True)
     clustcolor = clustcolor[np.sort(idx)]
-    clustcolor = [
-        i for i in clustcolor if i != "b"
-    ]  # remove additional blue base linkage color
+    # remove additional blue base linkage color
+    clustcolor = [i for i in clustcolor if i != "b"]
 
-    max_cluster = len(clustcolor)
+
+    # get all cluster labels by inputting distance using color_threshold
+    y = fcluster(Z, color_threshold, criterion="distance")
+    max_cluster = max(y)
+    y = pd.DataFrame(y, columns=["y"])
 
     # define gridspec space
     gs = gridspec.GridSpec(max_cluster, max_cluster)
 
     # add dendrogram to gridspec
-    plt.subplot(gs[:, 0 : max_cluster - ts_space])
+    plt.subplot(gs[:, 0 : max_cluster - ts_hspace])
     plt.xlabel("Distance")
     plt.ylabel("Cluster")
     plt.axis("off")
 
     ddata = dendrogram(
-        Z, orientation="left", color_threshold=color_threshold, show_leaf_counts=True
+        Z, 
+        orientation="left", 
+        color_threshold=color_threshold, 
+        show_leaf_counts=True
     )
 
     # add distance labels in dendrogram
-    add_distance(ddata)
+    if dist_label:
+        add_distance(ddata)
 
     # add distance cutoff line
     line = color_threshold
     plt.axvline(x=line, c="black", lw=0.5, linestyle="--")
 
-    # get all cluster labels by inputting distance using color_threshold
-    y = fcluster(Z, color_threshold, criterion="distance")
-    y = pd.DataFrame(y, columns=["y"])
 
     # merge with original dataset
     dx = pd.concat([df.reset_index(drop=True), y], axis=1)
 
     # add timeseries graphs to gridspec
-    for cluster in range(1, max_cluster + 1):
-        color = clustcolor[cluster - 1]
-        reverse_plot = max_cluster + 1 - cluster
-        plt.subplot(
-            gs[reverse_plot - 1 : reverse_plot, max_cluster - ts_space : max_cluster]
-        )
-        plt.axis("off")
-        for i in range(len(dx[dx["y"] == cluster])):
-            plt.plot(dx[dx["y"] == cluster].T[:-1].iloc[:, i], color=color)
+    draw_timeseries(dx, max_cluster, gs, ts_hspace, clustcolor=clustcolor)
 
     plt.tight_layout()
