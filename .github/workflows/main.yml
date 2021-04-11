@@ -16,3 +16,7 @@ jobs:
         uses: AppThreat/sast-scan-action@1.0.2
         with:
           type: python
+      - name: secret-scan
+        uses: zricethezav/gitleaks-action@v1.5.0
+      - name: dependency-scan
+        uses: aufdenpunkt/python-safety-check@v1.0.4
