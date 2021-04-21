@@ -8,7 +8,7 @@ from scipy.cluster.hierarchy import dendrogram, fcluster, linkage
 def add_distance(ddata, dist_threshold=None, fontsize=8):
     """Plot cluster points & distance labels in dendrogram
 
-    Args
+    Args:
         ddata (np array): scipy dendrogram output
         dist_threshold: distance threshold where label will be drawn,
                         if None, 1/10 from base leafs will not be labelled to prevent clutter
@@ -60,17 +60,42 @@ def draw_timeseries(dx, max_cluster, gs, ts_hspace, clustcolor=None):
                 plt.plot(dx[dx["y"] == cluster].T[:-1].iloc[:, i])
 
 
+def draw_timeseries_allclust(dx, leaves, gs, ts_hspace):
+    """plot timeseries graphs beside dendrogram
+    
+    Args:
+        dx (df): dataframe with original timeseries data with column "y" indicating cluster no.
+        leaves (list): list of leave node names from scipy dendrogram
+        gs (matplotlib obj): gridspec configurations 
+        ts_hspace (int): > 0, < max_cluster
+                         horizontal space in gridspec for plotting timeseries
+    """
+    max_cluster = len(leaves)
+    # flip leaves, as gridspec iterates from top down
+    leaves = leaves[::-1]
+    
+    for cnt in range(len(leaves)):
+        plt.subplot(gs[cnt:cnt+1, max_cluster-ts_hspace:max_cluster])
+        plt.axis("off")
+        
+        # get leafnode name, which corresponds to original data index
+        leafnode = leaves[cnt]
+        timeseries = dx[dx["y"] == leafnode]
+        for i in range(len(timeseries)):
+            plt.plot(timeseries.T[:-1].iloc[:, i])
+
+
 def maxclust_draw(df, method, metric, max_cluster, ts_hspace=1, dist_label=False):
     """Draw agglomerative clustering dendrogram with timeseries graphs based on maximum cluster criteron
 
-    Args
+    Args:
         df (pd dataframe): df with each row being the time window of readings
         method: agglomerative clustering linkage method, e.g., 'ward'
         metric: distance metrics, e.g., 'euclidean'
         max_cluster: maximum cluster size to trim dendrogram, and extract cluster labels
         ts_hspace: horizontal space for timeseries graph to be plotted
 
-    Out
+    Out:
         Plot dendrogram with aggregrated timeseries graphs on the side
         based on maximum cluster
     """
@@ -117,13 +142,13 @@ def allclust_draw(df, method, metric, ts_hspace=2, dist_label=False):
     """
     Draw agglomerative clustering dendrogram with timeseries graphs for all clusters
 
-    Args
+    Args:
         df (pd dataframe): df with each row being the time window of readings
         method (str): agglomerative clustering linkage method, e.g., 'ward'
         metric (str): distance metrics, e.g., 'euclidean'
         ts_hspace (int): horizontal space for timeseries graph to be plotted
 
-    Out
+    Out:
         Plot dendrogram with all timeseries graphs on the side when distance=0
     """
 
@@ -145,16 +170,18 @@ def allclust_draw(df, method, metric, ts_hspace=2, dist_label=False):
     # add distance labels in dendrogram
     if dist_label:
         add_distance(ddata)
-
+    
+    # not required as index == cluster no.
     # get all cluster labels by inputting distance 0 threshold
-    y = fcluster(Z, 0, criterion="distance")
-    y = pd.DataFrame(y, columns=["y"])
+    # y = fcluster(Z, 0, criterion="distance")
+    # y = pd.DataFrame(y, columns=["y"])
 
     # merge with original dataset
-    dx = pd.concat([df.reset_index(drop=True), y], axis=1)
+    dx = df.reset_index(drop=True)
+    dx["y"] = dx.index.tolist()
 
     # add timeseries graphs to gridspec
-    draw_timeseries(dx, max_cluster, gs, ts_hspace)
+    draw_timeseries_allclust(dx, ddata["leaves"], gs, ts_hspace)
 
     # removed as kept having error when there are many clusters
     # plt.tight_layout() 
@@ -164,14 +191,14 @@ def colorclust_draw(df, method, metric, color_threshold, ts_hspace=1, dist_label
     """
     Draw agglomerative clustering dendrogram with timeseries graphs for cluster threshold by color
 
-    Args
+    Args:
         df (pd dataframe): df with each row being the time window of readings
         method: agglomerative clustering linkage method, e.g., 'ward'
         metric: distance metrics, e.g., 'euclidean'
         color_threshold: plot dendrogram cluster colors using a distance threshold
         ts_hspace: horizontal space for timeseries graph to be plotted
 
-    Out
+    Out:
         Plot dendrogram with timeseries graphs classified by color on the side
     """
 
