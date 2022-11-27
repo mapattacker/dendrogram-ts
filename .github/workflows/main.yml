@@ -20,3 +20,33 @@ jobs:
         uses: zricethezav/gitleaks-action@v1.5.0
       - name: dependency-scan
         uses: aufdenpunkt/python-safety-check@v1.0.4
+  
+  secrets-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: run secrets scan
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+
+  sast-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: run sast scan
+        uses: AppThreat/sast-scan-action@master
+        with:
+          output: reports
+          type: python
+
+  dependency-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: run dependency scan
+        uses: actions/dependency-review-action@v3
+        with:
+          fail-on-severity: high
